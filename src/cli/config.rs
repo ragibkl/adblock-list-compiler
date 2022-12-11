@@ -1,4 +1,4 @@
-use std::{path::PathBuf, str::FromStr};
+use std::{fmt::Display, path::PathBuf, str::FromStr};
 
 use thiserror::Error;
 use url::Url;
@@ -26,5 +26,17 @@ impl FromStr for Config {
         }
 
         Err(ParseConfigError)
+    }
+}
+
+impl Display for Config {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Config::Url(url) => f.write_fmt(format_args!("Url: {}", url.to_string())),
+            Config::File(path) => f.write_fmt(format_args!(
+                "File: {}",
+                path.as_path().as_os_str().to_str().unwrap_or_default()
+            )),
+        }
     }
 }

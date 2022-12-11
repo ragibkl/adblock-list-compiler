@@ -1,9 +1,11 @@
+use std::path::PathBuf;
+
 use clap::{Parser, Subcommand};
 
 use super::config::Config;
 
 #[derive(Debug, Subcommand)]
-enum Command {
+pub enum Command {
     /// Outputs the current config
     TestConfig {
         /// Sets a custom config file
@@ -14,6 +16,14 @@ enum Command {
             default_value = "https://raw.githubusercontent.com/ragibkl/adblock-dns-server/master/data/configuration.yaml"
         )]
         config: Config,
+
+        /// output file location
+        #[arg(short, long, value_name = "CONFIG", default_value = "/blacklist.zone")]
+        output: PathBuf,
+
+        /// output format
+        #[arg(short, long, value_name = "FORMAT", default_value = "zone")]
+        format: String,
     },
 }
 
@@ -21,7 +31,7 @@ enum Command {
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
-    command: Option<Command>,
+    pub command: Command,
 }
 
 impl Cli {

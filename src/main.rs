@@ -1,10 +1,6 @@
-use adblock_list_compiler::cli::Cli;
-use adblock_list_compiler::hello;
+use adblock_list_compiler::run;
 
-fn main() {
-    hello();
-
-    let cli = Cli::from_args();
-
-    println!("{:#?}", cli);
+#[tokio::main]
+async fn main() {
+    run().await;
 }
