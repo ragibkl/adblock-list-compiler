@@ -9,15 +9,13 @@ pub fn hello() {
 pub async fn run() {
     let cli_args = cli::Cli::from_args();
 
-    println!("{:#?}", &cli_args);
-
     match &cli_args.command {
-        cli::Command::TestConfig {
+        cli::Command::CheckConfig {
             config,
             output,
             format,
         } => {
-            commands::test_config::test_config(config, output, format).await;
+            commands::check_config::check_config(config, output, format).await;
         }
     };
 }

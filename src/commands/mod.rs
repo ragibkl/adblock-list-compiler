@@ -1,1 +1,1 @@
-pub mod test_config;
+pub mod check_config;

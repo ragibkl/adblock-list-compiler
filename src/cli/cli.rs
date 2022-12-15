@@ -7,7 +7,7 @@ use super::config::Config;
 #[derive(Debug, Subcommand)]
 pub enum Command {
     /// Outputs the current config
-    TestConfig {
+    CheckConfig {
         /// Sets a custom config file
         #[arg(
             short,
@@ -18,7 +18,7 @@ pub enum Command {
         config: Config,
 
         /// output file location
-        #[arg(short, long, value_name = "CONFIG", default_value = "/blacklist.zone")]
+        #[arg(short, long, value_name = "CONFIG", default_value = "./blacklist.zone")]
         output: PathBuf,
 
         /// output format

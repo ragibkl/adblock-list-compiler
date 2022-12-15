@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use crate::cli::Config;
 use crate::source_config::provider::SourceConfigProvider;
 
-pub async fn test_config(config: &Config, output: &PathBuf, format: &str) {
+pub async fn check_config(config: &Config, output: &PathBuf, format: &str) {
     let conf_provider: SourceConfigProvider = match config {
         Config::Url(url) => SourceConfigProvider::from(url),
         Config::File(path) => SourceConfigProvider::from(path),
