@@ -25,6 +25,8 @@ pub enum Command {
         #[arg(short, long, value_name = "FORMAT", default_value = "zone")]
         format: String,
     },
+
+    Compile,
 }
 
 #[derive(Debug, Parser)]

@@ -1,5 +1,6 @@
 pub mod cli;
 mod commands;
+mod service;
 mod source_config;
 
 pub fn hello() {
@@ -16,6 +17,9 @@ pub async fn run() {
             format,
         } => {
             commands::check_config::check_config(config, output, format).await;
+        }
+        cli::Command::Compile => {
+            commands::compile::compile().await;
         }
     };
 }
