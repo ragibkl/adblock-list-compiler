@@ -9,6 +9,7 @@ dependencies = [
  "addr",
  "async-trait",
  "clap",
+ "idna",
  "lazy_static",
  "regex",
  "reqwest",

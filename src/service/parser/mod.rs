@@ -1,18 +1,18 @@
+mod cname;
+mod domains;
 mod hosts;
 
 use crate::source_config::source_config::BlacklistFormat;
 
-pub use self::hosts::HostsParser;
+pub use self::{domains::DomainsParser, hosts::HostsParser};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Domain(pub String);
 
-pub struct DomainsParser;
-
-impl DomainsParser {
-    fn parse(&self, value: &str) -> Option<Domain> {
-        todo!()
-    }
+#[derive(Debug, PartialEq)]
+pub struct Override {
+    pub from: String,
+    pub to: String,
 }
 
 pub struct CNameParser;

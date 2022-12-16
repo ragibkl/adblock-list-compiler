@@ -26,7 +26,24 @@ pub enum Command {
         format: String,
     },
 
-    Compile,
+    Compile {
+        /// Sets a custom config file
+        #[arg(
+            short,
+            long,
+            value_name = "CONFIG",
+            default_value = "https://raw.githubusercontent.com/ragibkl/adblock-dns-server/master/data/configuration.yaml"
+        )]
+        config: Config,
+
+        /// output file location
+        #[arg(short, long, value_name = "CONFIG", default_value = "./blacklist.zone")]
+        output: PathBuf,
+
+        /// output format
+        #[arg(short, long, value_name = "FORMAT", default_value = "zone")]
+        format: String,
+    },
 }
 
 #[derive(Debug, Parser)]

@@ -18,8 +18,12 @@ pub async fn run() {
         } => {
             commands::check_config::check_config(config, output, format).await;
         }
-        cli::Command::Compile => {
-            commands::compile::compile().await;
+        cli::Command::Compile {
+            config,
+            output,
+            format,
+        } => {
+            commands::compile::compile(config, output, format).await;
         }
     };
 }

@@ -2,7 +2,10 @@ pub mod blacklist;
 
 use crate::{cli::Config, source_config::source_config::SourceConfig};
 
-use super::{fetch_source::FetchSource, parser::BlacklistParser};
+use super::{
+    fetch_source::FetchSource,
+    parser::{BlacklistParser, Domain},
+};
 
 pub use self::blacklist::BlacklistCompiler;
 
@@ -22,5 +25,16 @@ impl AdblockCompiler {
             .collect();
 
         Self { blacklists }
+    }
+
+    pub async fn compile(&self) {
+        let mut blacklists: Vec<Domain> = Vec::new();
+
+        for bl in &self.blacklists {
+            let domain = bl.load_blacklist().await;
+            blacklists.extend(domain);
+        }
+
+        println!("{:#?}", blacklists);
     }
 }

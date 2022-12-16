@@ -11,7 +11,10 @@ pub struct FetchHTTP {
 }
 impl FetchHTTP {
     async fn fetch(&self) -> Result<String, ()> {
-        let response = reqwest::get(self.url.to_string()).await.map_err(|e| ())?;
+        let response = reqwest::get(self.url.to_string()).await.map_err(|e| {
+            println!("failed http: {}", &self.url.to_string());
+            ()
+        })?;
         let text = response.text().await.map_err(|e| ())?;
         Ok(text)
     }
@@ -23,7 +26,10 @@ pub struct FetchFile {
 
 impl FetchFile {
     async fn fetch(&self) -> Result<String, ()> {
-        let contents = read_to_string(&self.path).map_err(|_e| ())?;
+        let contents = read_to_string(&self.path).map_err(|e| {
+            println!("failed file: {}", &self.path.as_path().to_str().unwrap());
+            ()
+        })?;
         Ok(contents)
     }
 }
@@ -35,7 +41,7 @@ pub enum FetchSource {
 
 impl FetchSource {
     pub fn new_from(source_path: &str, config_url: &Config) -> Self {
-        if source_path.starts_with("http://") {
+        if source_path.starts_with("http") {
             let u = url::Url::parse(source_path).unwrap();
             FetchSource::HTTP(FetchHTTP { url: u })
         } else if source_path.starts_with("./") {

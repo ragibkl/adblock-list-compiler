@@ -17,6 +17,29 @@ impl HostsParser {
         RE.captures(value)
             .and_then(|cap| cap.name("domain"))
             .and_then(|d| parse_domain_name(d.as_str()).ok())
-            .map(|d| Domain(d.as_str().trim().to_string()))
+            .map(|d| d.as_str().trim().to_string())
+            .map(|d| idna::domain_to_ascii(&d).ok())
+            .flatten()
+            .map(|d| Domain(d))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_extract_domain() {
+        let parser = HostsParser {};
+
+        let input = "127.0.0.1 abc.example.com";
+        let expected = Domain("abc.example.com".to_string());
+        let output = parser.parse(input);
+        assert_eq!(output, Some(expected));
+
+        let input = "127.0.0.1 Bücher.example.com";
+        let expected = Domain("xn--bcher-kva.example.com".to_string());
+        let output = parser.parse(input);
+        assert_eq!(output, Some(expected));
     }
 }
