@@ -2,6 +2,7 @@ use std::fs::read_to_string;
 use std::path::PathBuf;
 use std::str::FromStr;
 
+use thiserror::Error;
 use url::Url;
 
 use crate::cli::Config;
@@ -9,13 +10,17 @@ use crate::cli::Config;
 pub struct FetchHTTP {
     pub url: Url,
 }
+
+#[derive(Error, Debug)]
+pub enum FetchHTTPError {
+    #[error("HTTPError: {0}")]
+    HTTPError(#[from] reqwest::Error),
+}
+
 impl FetchHTTP {
-    async fn fetch(&self) -> Result<String, ()> {
-        let response = reqwest::get(self.url.to_string()).await.map_err(|e| {
-            println!("failed http: {}", &self.url.to_string());
-            ()
-        })?;
-        let text = response.text().await.map_err(|e| ())?;
+    async fn fetch(&self) -> Result<String, FetchHTTPError> {
+        let response = reqwest::get(self.url.to_string()).await?;
+        let text = response.text().await?;
         Ok(text)
     }
 }
@@ -24,12 +29,15 @@ pub struct FetchFile {
     pub path: PathBuf,
 }
 
+#[derive(Error, Debug)]
+pub enum FetchFileError {
+    #[error("FileError: {0}")]
+    FileError(#[from] std::io::Error),
+}
+
 impl FetchFile {
-    async fn fetch(&self) -> Result<String, ()> {
-        let contents = read_to_string(&self.path).map_err(|e| {
-            println!("failed file: {}", &self.path.as_path().to_str().unwrap());
-            ()
-        })?;
+    async fn fetch(&self) -> Result<String, FetchFileError> {
+        let contents = read_to_string(&self.path)?;
         Ok(contents)
     }
 }
@@ -37,6 +45,15 @@ impl FetchFile {
 pub enum FetchSource {
     HTTP(FetchHTTP),
     File(FetchFile),
+}
+
+#[derive(Error, Debug)]
+pub enum FetchSourceError {
+    #[error("HTTPError: {0}")]
+    HTTPError(#[from] FetchHTTPError),
+
+    #[error("FileError: {0}")]
+    FileError(#[from] FetchFileError),
 }
 
 impl FetchSource {
@@ -61,10 +78,10 @@ impl FetchSource {
         }
     }
 
-    pub async fn fetch(&self) -> Result<String, ()> {
+    pub async fn fetch(&self) -> Result<String, FetchSourceError> {
         match self {
-            FetchSource::HTTP(p) => p.fetch().await,
-            FetchSource::File(p) => p.fetch().await,
+            FetchSource::HTTP(p) => Ok(p.fetch().await?),
+            FetchSource::File(p) => Ok(p.fetch().await?),
         }
     }
 }
