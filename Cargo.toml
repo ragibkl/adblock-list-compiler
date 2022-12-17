@@ -19,6 +19,3 @@ serde_yaml = "0.9"
 thiserror = "1.0"
 tokio = { version = "1", features = ["full"] }
 url = "2.3"
-
-[profile.release]
-debug = true
