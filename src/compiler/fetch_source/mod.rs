@@ -1,58 +1,17 @@
-use lazy_static::lazy_static;
-use std::fs::read_to_string;
+mod file;
+mod http;
+
 use std::path::PathBuf;
 use std::str::FromStr;
-use std::time::Duration;
 
 use thiserror::Error;
-use url::Url;
 
 use crate::cli::ConfigUrl;
 
-#[derive(Debug)]
-pub struct FetchHTTP {
-    pub url: Url,
-}
-
-#[derive(Error, Debug)]
-pub enum FetchHTTPError {
-    #[error("HTTPError: {0}")]
-    HTTPError(#[from] reqwest::Error),
-}
-
-impl FetchHTTP {
-    async fn fetch(&self) -> Result<String, FetchHTTPError> {
-        lazy_static! {
-            static ref CLIENT: reqwest::Client = reqwest::Client::builder()
-                .connect_timeout(Duration::from_secs(5))
-                .timeout(Duration::from_secs(60))
-                .build()
-                .unwrap();
-        }
-
-        let response = CLIENT.get(self.url.to_string()).send().await?;
-        let text = response.text().await?;
-        Ok(text)
-    }
-}
-
-#[derive(Debug)]
-pub struct FetchFile {
-    pub path: PathBuf,
-}
-
-#[derive(Error, Debug)]
-pub enum FetchFileError {
-    #[error("FileError: {0}")]
-    FileError(#[from] std::io::Error),
-}
-
-impl FetchFile {
-    async fn fetch(&self) -> Result<String, FetchFileError> {
-        let contents = read_to_string(&self.path)?;
-        Ok(contents)
-    }
-}
+use self::{
+    file::{FetchFile, FetchFileError},
+    http::{FetchHTTP, FetchHTTPError},
+};
 
 #[derive(Debug)]
 pub enum FetchSource {
