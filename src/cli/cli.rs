@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
 
-use super::config::Config;
+use super::config_url::ConfigUrl;
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
@@ -15,7 +15,7 @@ pub enum Command {
             value_name = "CONFIG",
             default_value = "https://raw.githubusercontent.com/ragibkl/adblock-dns-server/master/data/configuration.yaml"
         )]
-        config: Config,
+        config_url: ConfigUrl,
 
         /// output file location
         #[arg(short, long, value_name = "CONFIG", default_value = "./blacklist.zone")]
@@ -34,7 +34,7 @@ pub enum Command {
             value_name = "CONFIG",
             default_value = "https://raw.githubusercontent.com/ragibkl/adblock-dns-server/master/data/configuration.yaml"
         )]
-        config: Config,
+        config_url: ConfigUrl,
 
         /// output file location
         #[arg(short, long, value_name = "CONFIG", default_value = "./blacklist.zone")]

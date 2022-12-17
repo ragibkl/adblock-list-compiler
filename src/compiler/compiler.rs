@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{cli::Config, source_config::source_config::SourceConfig};
+use crate::{cli::ConfigUrl, source_config::source_config::SourceConfig};
 
 use super::{
     fetch_source::FetchSource,
@@ -15,7 +15,7 @@ pub struct AdblockCompiler {
 }
 
 impl AdblockCompiler {
-    pub fn new(config: &SourceConfig, config_url: &Config) -> Self {
+    pub fn new(config: &SourceConfig, config_url: &ConfigUrl) -> Self {
         let blacklists: Vec<BlacklistCompiler> = config
             .blacklist
             .iter()

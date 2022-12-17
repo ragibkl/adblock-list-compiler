@@ -1,5 +1,5 @@
 mod cli;
-mod config;
+mod config_url;
 
 pub use cli::*;
-pub use config::Config;
+pub use config_url::ConfigUrl;

@@ -12,18 +12,18 @@ pub async fn run() {
 
     match &cli_args.command {
         cli::Command::CheckConfig {
-            config,
+            config_url,
             output,
             format,
         } => {
-            commands::check_config::check_config(config, output, format).await;
+            commands::check_config::check_config(config_url, output, format).await;
         }
         cli::Command::Compile {
-            config,
+            config_url,
             output,
             format,
         } => {
-            commands::compile::compile(config, output, format).await;
+            commands::compile::compile(config_url, output, format).await;
         }
     };
 }

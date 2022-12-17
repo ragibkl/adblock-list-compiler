@@ -1,15 +1,15 @@
 use std::path::PathBuf;
 
-use crate::cli::Config;
+use crate::cli::ConfigUrl;
 use crate::source_config::provider::SourceConfigProvider;
 
-pub async fn check_config(config: &Config, output: &PathBuf, format: &str) {
-    let conf_provider: SourceConfigProvider = match config {
-        Config::Url(url) => SourceConfigProvider::from(url),
-        Config::File(path) => SourceConfigProvider::from(path),
+pub async fn check_config(config_url: &ConfigUrl, output: &PathBuf, format: &str) {
+    let conf_provider: SourceConfigProvider = match config_url {
+        ConfigUrl::Url(url) => SourceConfigProvider::from(url),
+        ConfigUrl::File(path) => SourceConfigProvider::from(path),
     };
 
-    println!("configuration file: {}", config);
+    println!("configuration file: {}", config_url);
     println!("output file: {}", output.display());
     println!("output format: {}", format);
 

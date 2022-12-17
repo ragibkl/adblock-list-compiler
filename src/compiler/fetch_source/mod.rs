@@ -5,7 +5,7 @@ use std::str::FromStr;
 use thiserror::Error;
 use url::Url;
 
-use crate::cli::Config;
+use crate::cli::ConfigUrl;
 
 pub struct FetchHTTP {
     pub url: Url,
@@ -57,17 +57,17 @@ pub enum FetchSourceError {
 }
 
 impl FetchSource {
-    pub fn new_from(source_path: &str, config_url: &Config) -> Self {
+    pub fn new_from(source_path: &str, config_url: &ConfigUrl) -> Self {
         if source_path.starts_with("http") {
             let u = url::Url::parse(source_path).unwrap();
             FetchSource::HTTP(FetchHTTP { url: u })
         } else if source_path.starts_with("./") {
             match config_url {
-                Config::Url(u) => {
+                ConfigUrl::Url(u) => {
                     let a = u.join(source_path).unwrap();
                     FetchSource::HTTP(FetchHTTP { url: a })
                 }
-                Config::File(p) => {
+                ConfigUrl::File(p) => {
                     let q = p.join(source_path);
                     FetchSource::File(FetchFile { path: q })
                 }

@@ -4,7 +4,7 @@ use thiserror::Error;
 use url::Url;
 
 #[derive(Clone, Debug)]
-pub enum Config {
+pub enum ConfigUrl {
     Url(Url),
     File(PathBuf),
 }
@@ -13,7 +13,7 @@ pub enum Config {
 #[error("ParseConfigError")]
 pub struct ParseConfigError;
 
-impl FromStr for Config {
+impl FromStr for ConfigUrl {
     type Err = ParseConfigError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -29,11 +29,11 @@ impl FromStr for Config {
     }
 }
 
-impl Display for Config {
+impl Display for ConfigUrl {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Config::Url(url) => f.write_fmt(format_args!("Url: {}", url.to_string())),
-            Config::File(path) => f.write_fmt(format_args!(
+            ConfigUrl::Url(url) => f.write_fmt(format_args!("Url: {}", url.to_string())),
+            ConfigUrl::File(path) => f.write_fmt(format_args!(
                 "File: {}",
                 path.as_path().as_os_str().to_str().unwrap_or_default()
             )),
