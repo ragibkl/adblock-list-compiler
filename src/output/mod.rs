@@ -29,7 +29,6 @@ impl ZoneOutput {
         );
         lines.push("                NS      LOCALHOST.".to_string());
 
-
         for cname in &self.adblock.rewrites {
             let line = self.format_cname_rewrite(&cname.domain.0, &cname.alias.0);
             lines.push(line);

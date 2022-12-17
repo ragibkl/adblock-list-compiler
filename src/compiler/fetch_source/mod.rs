@@ -1,6 +1,8 @@
+use lazy_static::lazy_static;
 use std::fs::read_to_string;
 use std::path::PathBuf;
 use std::str::FromStr;
+use std::time::Duration;
 
 use thiserror::Error;
 use url::Url;
@@ -20,7 +22,15 @@ pub enum FetchHTTPError {
 
 impl FetchHTTP {
     async fn fetch(&self) -> Result<String, FetchHTTPError> {
-        let response = reqwest::get(self.url.to_string()).await?;
+        lazy_static! {
+            static ref CLIENT: reqwest::Client = reqwest::Client::builder()
+                .connect_timeout(Duration::from_secs(5))
+                .timeout(Duration::from_secs(60))
+                .build()
+                .unwrap();
+        }
+
+        let response = CLIENT.get(self.url.to_string()).send().await?;
         let text = response.text().await?;
         Ok(text)
     }
