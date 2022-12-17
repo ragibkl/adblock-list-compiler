@@ -1,7 +1,33 @@
-use crate::compiler::{
+use crate::source_config::source_config::BlacklistFormat;
+
+use super::{
     fetch_source::FetchSource,
-    parser::{Domain, ParseBlacklist},
+    parser::{Domain, Host},
 };
+
+#[derive(Debug)]
+pub enum ParseBlacklist {
+    Hosts,
+    Domains,
+}
+
+impl ParseBlacklist {
+    pub fn parse(&self, value: &str) -> Option<Domain> {
+        match self {
+            ParseBlacklist::Hosts => Host::parse(value).map(|h| h.into_domain()),
+            ParseBlacklist::Domains => Domain::parse(value),
+        }
+    }
+}
+
+impl From<&BlacklistFormat> for ParseBlacklist {
+    fn from(value: &BlacklistFormat) -> Self {
+        match value {
+            BlacklistFormat::Hosts => ParseBlacklist::Hosts,
+            BlacklistFormat::Domains => ParseBlacklist::Domains,
+        }
+    }
+}
 
 #[derive(Debug)]
 pub struct BlacklistCompiler {

@@ -3,11 +3,11 @@ use std::collections::HashSet;
 use crate::{cli::ConfigUrl, source_config::source_config::SourceConfig};
 
 use super::{
-    blacklist::BlacklistCompiler,
+    blacklist::{BlacklistCompiler, ParseBlacklist},
     fetch_source::FetchSource,
-    parser::{CName, Domain, ParseBlacklist, ParseWhitelist},
+    parser::{CName, Domain},
     rewrites::{ParseRewrite, RewritesCompiler},
-    whitelist::WhitelistCompiler,
+    whitelist::{ParseWhitelist, WhitelistCompiler},
 };
 
 pub struct Adblock {

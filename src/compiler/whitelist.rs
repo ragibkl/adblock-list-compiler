@@ -1,7 +1,36 @@
-use crate::compiler::{
+use crate::source_config::source_config::WhitelistFormat;
+
+use super::{
     fetch_source::FetchSource,
-    parser::{Domain, ParseWhitelist},
+    parser::{CName, Domain, Host},
 };
+
+#[derive(Debug)]
+pub enum ParseWhitelist {
+    Hosts,
+    Domains,
+    Zone,
+}
+
+impl ParseWhitelist {
+    pub fn parse(&self, value: &str) -> Option<Domain> {
+        match self {
+            ParseWhitelist::Hosts => Host::parse(value).map(|h| h.into_domain()),
+            ParseWhitelist::Domains => Domain::parse(value),
+            ParseWhitelist::Zone => CName::parse(value).map(|c| c.into_domain()),
+        }
+    }
+}
+
+impl From<&WhitelistFormat> for ParseWhitelist {
+    fn from(value: &WhitelistFormat) -> Self {
+        match value {
+            WhitelistFormat::Hosts => ParseWhitelist::Hosts,
+            WhitelistFormat::Domains => ParseWhitelist::Domains,
+            WhitelistFormat::Zone => ParseWhitelist::Zone,
+        }
+    }
+}
 
 #[derive(Debug)]
 pub struct WhitelistCompiler {
