@@ -3,6 +3,7 @@ use crate::compiler::{
     parser::{Domain, ParseWhitelist},
 };
 
+#[derive(Debug)]
 pub struct WhitelistCompiler {
     pub(crate) file_source: FetchSource,
     pub(crate) parser: ParseWhitelist,

@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use crate::cli::ConfigUrl;
+use crate::compiler::AdblockCompiler;
 use crate::source_config::provider::SourceConfigProvider;
 
 pub async fn check_config(config_url: &ConfigUrl, output: &PathBuf, format: &str) {
@@ -19,4 +20,7 @@ pub async fn check_config(config_url: &ConfigUrl, output: &PathBuf, format: &str
 
     println!("source configuration:");
     println!("{:#?}", source_config);
+
+    let adblock_compiler = AdblockCompiler::new(&source_config, config_url);
+    println!("Compiler Setting: {:#?}", &adblock_compiler);
 }

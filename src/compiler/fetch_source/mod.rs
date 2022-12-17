@@ -7,6 +7,7 @@ use url::Url;
 
 use crate::cli::ConfigUrl;
 
+#[derive(Debug)]
 pub struct FetchHTTP {
     pub url: Url,
 }
@@ -25,6 +26,7 @@ impl FetchHTTP {
     }
 }
 
+#[derive(Debug)]
 pub struct FetchFile {
     pub path: PathBuf,
 }
@@ -42,6 +44,7 @@ impl FetchFile {
     }
 }
 
+#[derive(Debug)]
 pub enum FetchSource {
     HTTP(FetchHTTP),
     File(FetchFile),

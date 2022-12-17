@@ -4,9 +4,9 @@ mod host;
 
 use crate::source_config::source_config::{BlacklistFormat, WhitelistFormat};
 
-pub use self::domain::Domain;
-use self::{cname::CName, host::Host};
+pub use self::{cname::CName, domain::Domain, host::Host};
 
+#[derive(Debug)]
 pub enum ParseBlacklist {
     Hosts,
     Domains,
@@ -30,6 +30,7 @@ impl From<&BlacklistFormat> for ParseBlacklist {
     }
 }
 
+#[derive(Debug)]
 pub enum ParseWhitelist {
     Hosts,
     Domains,

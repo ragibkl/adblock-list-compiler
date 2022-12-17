@@ -3,12 +3,18 @@ use std::collections::HashSet;
 use crate::{cli::ConfigUrl, source_config::source_config::SourceConfig};
 
 use super::{
+    blacklist::BlacklistCompiler,
     fetch_source::FetchSource,
-    parser::{Domain, ParseBlacklist, ParseWhitelist},
+    parser::{CName, Domain, ParseBlacklist, ParseWhitelist},
+    whitelist::WhitelistCompiler,
 };
 
-use super::{blacklist::BlacklistCompiler, whitelist::WhitelistCompiler};
+pub struct Adblock {
+    pub blacklists: Vec<Domain>,
+    pub overrides: Vec<CName>,
+}
 
+#[derive(Debug)]
 pub struct AdblockCompiler {
     blacklists: Vec<BlacklistCompiler>,
     whitelists: Vec<WhitelistCompiler>,
@@ -40,7 +46,7 @@ impl AdblockCompiler {
         }
     }
 
-    pub async fn compile(&self) {
+    pub async fn compile(&self) -> Adblock {
         let mut whitelists: HashSet<Domain> = HashSet::new();
         for wl in &self.whitelists {
             let domains = wl.load_whitelist().await;
@@ -61,7 +67,11 @@ impl AdblockCompiler {
         }
 
         let blacklists: Vec<Domain> = Vec::from_iter(blacklists);
+        let overrides: Vec<CName> = Vec::new();
 
-        println!("{:#?}", blacklists);
+        Adblock {
+            blacklists,
+            overrides,
+        }
     }
 }

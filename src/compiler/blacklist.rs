@@ -3,6 +3,7 @@ use crate::compiler::{
     parser::{Domain, ParseBlacklist},
 };
 
+#[derive(Debug)]
 pub struct BlacklistCompiler {
     pub(crate) file_source: FetchSource,
     pub(crate) parser: ParseBlacklist,
