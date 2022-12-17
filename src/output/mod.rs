@@ -15,7 +15,7 @@ impl ZoneOutput {
         format!("{} CNAME null.null-zone.null.", bl)
     }
 
-    fn format_cname_override(&self, domain: &str, alias: &str) -> String {
+    fn format_cname_rewrite(&self, domain: &str, alias: &str) -> String {
         format!("{} CNAME {}.", domain, alias)
     }
 
@@ -29,13 +29,14 @@ impl ZoneOutput {
         );
         lines.push("                NS      LOCALHOST.".to_string());
 
-        for domain in &self.adblock.blacklists {
-            let line = self.format_blacklist(&domain.0);
+
+        for cname in &self.adblock.rewrites {
+            let line = self.format_cname_rewrite(&cname.domain.0, &cname.alias.0);
             lines.push(line);
         }
 
-        for cname in &self.adblock.overrides {
-            let line = self.format_cname_override(&cname.domain.0, &cname.alias.0);
+        for domain in &self.adblock.blacklists {
+            let line = self.format_blacklist(&domain.0);
             lines.push(line);
         }
 

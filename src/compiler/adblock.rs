@@ -6,18 +6,20 @@ use super::{
     blacklist::BlacklistCompiler,
     fetch_source::FetchSource,
     parser::{CName, Domain, ParseBlacklist, ParseWhitelist},
+    rewrites::{ParseRewrite, RewritesCompiler},
     whitelist::WhitelistCompiler,
 };
 
 pub struct Adblock {
     pub blacklists: Vec<Domain>,
-    pub overrides: Vec<CName>,
+    pub rewrites: Vec<CName>,
 }
 
 #[derive(Debug)]
 pub struct AdblockCompiler {
     blacklists: Vec<BlacklistCompiler>,
     whitelists: Vec<WhitelistCompiler>,
+    rewrites: Vec<RewritesCompiler>,
 }
 
 impl AdblockCompiler {
@@ -40,9 +42,19 @@ impl AdblockCompiler {
             })
             .collect();
 
+        let rewrites: Vec<RewritesCompiler> = config
+            .overrides
+            .iter()
+            .map(|rw| RewritesCompiler {
+                file_source: FetchSource::new_from(&rw.path, config_url),
+                parser: ParseRewrite::from(&rw.format),
+            })
+            .collect();
+
         Self {
             blacklists,
             whitelists,
+            rewrites,
         }
     }
 
@@ -66,12 +78,17 @@ impl AdblockCompiler {
             }
         }
 
+        let mut rewrites: Vec<CName> = Vec::new();
+        for rw in &self.rewrites {
+            let cnames = rw.load_rewrites().await;
+            rewrites.extend(cnames);
+        }
+
         let blacklists: Vec<Domain> = Vec::from_iter(blacklists);
-        let overrides: Vec<CName> = Vec::new();
 
         Adblock {
             blacklists,
-            overrides,
+            rewrites,
         }
     }
 }

@@ -11,7 +11,15 @@ pub struct BlacklistCompiler {
 
 impl BlacklistCompiler {
     pub async fn load_blacklist(&self) -> Vec<Domain> {
-        let source = self.file_source.fetch().await.unwrap();
+        let source = match self.file_source.fetch().await {
+            Ok(s) => s,
+            Err(err) => {
+                println!("Could not fetch from {:?}", &self.file_source);
+                println!("{}", err);
+                println!("Skipping");
+                return Vec::new();
+            }
+        };
 
         let mut blacklists: Vec<Domain> = Vec::new();
         for line in source.lines() {

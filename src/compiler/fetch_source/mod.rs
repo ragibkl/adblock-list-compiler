@@ -71,7 +71,7 @@ impl FetchSource {
                     FetchSource::HTTP(FetchHTTP { url: a })
                 }
                 ConfigUrl::File(p) => {
-                    let q = p.join(source_path);
+                    let q = p.parent().unwrap().join(source_path);
                     FetchSource::File(FetchFile { path: q })
                 }
             }

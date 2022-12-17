@@ -56,7 +56,3 @@ impl From<&WhitelistFormat> for ParseWhitelist {
         }
     }
 }
-
-pub enum ParseOverride {
-    CName,
-}
