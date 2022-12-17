@@ -10,7 +10,6 @@ pub enum BlacklistFormat {
 pub enum WhitelistFormat {
     Hosts,
     Domains,
-    Cname,
     Zone,
 }
 

@@ -1,12 +1,13 @@
 mod cname;
 mod domains;
 mod hosts;
+mod zone;
 
-use crate::source_config::source_config::BlacklistFormat;
+use crate::source_config::source_config::{BlacklistFormat, WhitelistFormat};
 
-pub use self::{domains::DomainsParser, hosts::HostsParser};
+use self::{cname::CNameParser, domains::DomainsParser, hosts::HostsParser, zone::ZoneParser};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Eq, Hash, PartialEq)]
 pub struct Domain(pub String);
 
 #[derive(Debug, PartialEq)]
@@ -14,9 +15,6 @@ pub struct Override {
     pub from: String,
     pub to: String,
 }
-
-pub struct CNameParser;
-pub struct ZoneParser;
 
 pub enum BlacklistParser {
     Hosts(HostsParser),
@@ -41,11 +39,30 @@ impl From<&BlacklistFormat> for BlacklistParser {
     }
 }
 
-pub enum WhitelistFormat {
+pub enum WhitelistParser {
     HostsParser(HostsParser),
     DomainsParser(DomainsParser),
-    CNameParser(CNameParser),
     ZoneParser(ZoneParser),
+}
+
+impl WhitelistParser {
+    pub fn parse(&self, value: &str) -> Option<Domain> {
+        match self {
+            WhitelistParser::HostsParser(p) => p.parse(value),
+            WhitelistParser::DomainsParser(p) => p.parse(value),
+            WhitelistParser::ZoneParser(p) => p.parse(value),
+        }
+    }
+}
+
+impl From<&WhitelistFormat> for WhitelistParser {
+    fn from(value: &WhitelistFormat) -> Self {
+        match value {
+            WhitelistFormat::Hosts => WhitelistParser::HostsParser(HostsParser {}),
+            WhitelistFormat::Domains => WhitelistParser::DomainsParser(DomainsParser {}),
+            WhitelistFormat::Zone => WhitelistParser::ZoneParser(ZoneParser {}),
+        }
+    }
 }
 
 pub enum OverrideFormat {

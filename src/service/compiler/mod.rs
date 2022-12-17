@@ -1,16 +1,20 @@
 pub mod blacklist;
+pub mod whitelist;
+
+use std::collections::HashSet;
 
 use crate::{cli::Config, source_config::source_config::SourceConfig};
 
 use super::{
     fetch_source::FetchSource,
-    parser::{BlacklistParser, Domain},
+    parser::{BlacklistParser, Domain, WhitelistParser},
 };
 
-pub use self::blacklist::BlacklistCompiler;
+use self::{blacklist::BlacklistCompiler, whitelist::WhitelistCompiler};
 
 pub struct AdblockCompiler {
     blacklists: Vec<BlacklistCompiler>,
+    whitelists: Vec<WhitelistCompiler>,
 }
 
 impl AdblockCompiler {
@@ -24,16 +28,42 @@ impl AdblockCompiler {
             })
             .collect();
 
-        Self { blacklists }
+        let whitelists: Vec<WhitelistCompiler> = config
+            .whitelist
+            .iter()
+            .map(|wl| WhitelistCompiler {
+                file_source: FetchSource::new_from(&wl.path, config_url),
+                parser: WhitelistParser::from(&wl.format),
+            })
+            .collect();
+
+        Self {
+            blacklists,
+            whitelists,
+        }
     }
 
     pub async fn compile(&self) {
-        let mut blacklists: Vec<Domain> = Vec::new();
-
-        for bl in &self.blacklists {
-            let domain = bl.load_blacklist().await;
-            blacklists.extend(domain);
+        let mut whitelists: HashSet<Domain> = HashSet::new();
+        for wl in &self.whitelists {
+            let domains = wl.load_whitelist().await;
+            for d in domains {
+                whitelists.insert(d);
+            }
         }
+
+        let mut blacklists: HashSet<Domain> = HashSet::new();
+        for bl in &self.blacklists {
+            let domains = bl.load_blacklist().await;
+
+            for d in domains {
+                if !whitelists.contains(&d) {
+                    blacklists.insert(d);
+                }
+            }
+        }
+
+        let blacklists: Vec<Domain> = Vec::from_iter(blacklists);
 
         println!("{:#?}", blacklists);
     }
