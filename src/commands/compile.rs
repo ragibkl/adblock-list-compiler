@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use crate::cli::Config;
-use crate::service::compiler::AdblockCompiler;
+use crate::compiler::AdblockCompiler;
 use crate::source_config::provider::SourceConfigProvider;
 
 pub async fn compile(config: &Config, output: &PathBuf, format: &str) {

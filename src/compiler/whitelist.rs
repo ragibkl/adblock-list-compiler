@@ -1,15 +1,15 @@
-use crate::service::{
+use crate::compiler::{
     fetch_source::FetchSource,
-    parser::{BlacklistParser, Domain},
+    parser::{Domain, ParseWhitelist},
 };
 
-pub struct BlacklistCompiler {
+pub struct WhitelistCompiler {
     pub(crate) file_source: FetchSource,
-    pub(crate) parser: BlacklistParser,
+    pub(crate) parser: ParseWhitelist,
 }
 
-impl BlacklistCompiler {
-    pub async fn load_blacklist(&self) -> Vec<Domain> {
+impl WhitelistCompiler {
+    pub async fn load_whitelist(&self) -> Vec<Domain> {
         let source = self.file_source.fetch().await.unwrap();
 
         let mut blacklists: Vec<Domain> = Vec::new();

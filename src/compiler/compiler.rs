@@ -1,16 +1,13 @@
-pub mod blacklist;
-pub mod whitelist;
-
 use std::collections::HashSet;
 
 use crate::{cli::Config, source_config::source_config::SourceConfig};
 
 use super::{
     fetch_source::FetchSource,
-    parser::{BlacklistParser, Domain, WhitelistParser},
+    parser::{Domain, ParseBlacklist, ParseWhitelist},
 };
 
-use self::{blacklist::BlacklistCompiler, whitelist::WhitelistCompiler};
+use super::{blacklist::BlacklistCompiler, whitelist::WhitelistCompiler};
 
 pub struct AdblockCompiler {
     blacklists: Vec<BlacklistCompiler>,
@@ -24,7 +21,7 @@ impl AdblockCompiler {
             .iter()
             .map(|bl| BlacklistCompiler {
                 file_source: FetchSource::new_from(&bl.path, config_url),
-                parser: BlacklistParser::from(&bl.format),
+                parser: ParseBlacklist::from(&bl.format),
             })
             .collect();
 
@@ -33,7 +30,7 @@ impl AdblockCompiler {
             .iter()
             .map(|wl| WhitelistCompiler {
                 file_source: FetchSource::new_from(&wl.path, config_url),
-                parser: WhitelistParser::from(&wl.format),
+                parser: ParseWhitelist::from(&wl.format),
             })
             .collect();
 

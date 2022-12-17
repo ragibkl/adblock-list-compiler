@@ -1,6 +1,6 @@
 pub mod cli;
 mod commands;
-mod service;
+mod compiler;
 mod source_config;
 
 pub fn hello() {
