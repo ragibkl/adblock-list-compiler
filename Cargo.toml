@@ -2,6 +2,9 @@
 name = "adblock-list-compiler"
 version = "0.1.0"
 edition = "2021"
+description = "CLI tool to compile multiple adblock list sources into a single file"
+license = "MIT"
+repository = "https://github.com/ragibkl/adblock-list-compiler"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
