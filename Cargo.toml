@@ -28,5 +28,6 @@ name = "ablc"
 path = "src/main.rs"
 
 [features]
-default = ["reqwest/default-tls"]
+default = ["default-tls"]
+default-tls = ["reqwest/default-tls"]
 rustls-tls = ["reqwest/rustls-tls"]
