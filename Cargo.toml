@@ -15,7 +15,7 @@ clap = { version = "4.0", features=["derive"] }
 idna = "0.3.0"
 lazy_static = "1.4.0"
 regex = "1"
-reqwest = { version = "0.11", features = ["json"] }
+reqwest = { version = "0.11", default-features = false, features = ["json"] }
 serde = { version ="1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_yaml = "0.9"
@@ -27,5 +27,7 @@ url = "2.3"
 name = "ablc"
 path = "src/main.rs"
 
-[target.x86_64-unknown-linux-musl.dependencies]
-reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls"] }
+[features]
+default = ["default-tls"]
+default-tls = ["reqwest/default-tls"]
+rustls-tls = ["reqwest/rustls-tls"]
