@@ -39,6 +39,8 @@ impl ZoneOutput {
             lines.push(line);
         }
 
+        // zone file must end with a newline
+        lines.push("".to_string());
         lines.join("\n")
     }
 }

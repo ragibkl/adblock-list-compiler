@@ -1,6 +1,6 @@
 [package]
 name = "adblock-list-compiler"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 description = "CLI tool to compile multiple adblock list sources into a single file"
 license = "MIT"
