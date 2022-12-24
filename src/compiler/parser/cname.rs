@@ -3,7 +3,7 @@ use regex::Regex;
 
 use super::Domain;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct CName {
     pub domain: Domain,
     pub alias: Domain,
@@ -17,7 +17,7 @@ fn parse_cname(input: &str) -> Option<CName> {
         .unwrap();
     }
 
-    let captures = match RE.captures(&input) {
+    let captures = match RE.captures(input) {
         Some(c) => c,
         None => return None,
     };
