@@ -25,14 +25,13 @@ impl ConfigProvider {
     pub async fn load(&self) -> Result<Config, LoadConfigError> {
         let content = self.fetch_config.fetch().await?;
         let source_config: SourceConfig = serde_yaml::from_str(&content)?;
-        let config = Config {
+
+        Ok(Config {
             config_url: self.config_url.clone(),
             blacklist: source_config.blacklist,
             whitelist: source_config.whitelist,
             overrides: source_config.overrides,
-        };
-
-        Ok(config)
+        })
     }
 }
 
