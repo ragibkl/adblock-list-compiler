@@ -1,38 +1,15 @@
-pub mod provider;
+mod config_url;
+mod fetch_config;
+mod load_config;
+mod source_config;
 
-#[derive(serde::Deserialize, Debug, Clone)]
-#[serde(rename_all = "snake_case")]
-pub enum BlacklistFormat {
-    Hosts,
-    Domains,
-}
+pub use config_url::ConfigUrl;
+pub use load_config::LoadConfig;
+pub use source_config::*;
 
-#[derive(serde::Deserialize, Debug, Clone)]
-#[serde(rename_all = "snake_case")]
-pub enum WhitelistFormat {
-    Hosts,
-    Domains,
-    Zone,
-}
-
-#[derive(serde::Deserialize, Debug, Clone)]
-#[serde(rename_all = "snake_case")]
-pub enum OverrideFormat {
-    Cname,
-}
-
-#[derive(serde::Deserialize, Debug, Clone)]
-pub struct Source<T> {
-    pub format: T,
-    pub path: String,
-}
-
-pub type Blacklist = Source<BlacklistFormat>;
-pub type Whitelist = Source<WhitelistFormat>;
-pub type Overrides = Source<OverrideFormat>;
-
-#[derive(serde::Deserialize, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub struct Config {
+    pub config_url: ConfigUrl,
     pub blacklist: Vec<Blacklist>,
     pub whitelist: Vec<Whitelist>,
     pub overrides: Vec<Overrides>,

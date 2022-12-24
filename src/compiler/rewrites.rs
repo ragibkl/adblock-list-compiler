@@ -25,29 +25,29 @@ impl From<&OverrideFormat> for ParseRewrite {
 
 #[derive(Debug)]
 pub struct RewritesCompiler {
-    pub(super) file_source: FetchSource,
+    pub(super) source: FetchSource,
     pub(super) parser: ParseRewrite,
 }
 
 impl RewritesCompiler {
     pub async fn load_rewrites(&self) -> Vec<CName> {
-        let source = match self.file_source.fetch().await {
+        let source = match self.source.fetch().await {
             Ok(s) => s,
             Err(err) => {
-                println!("Could not fetch from {:?}", &self.file_source);
+                println!("Could not fetch from {:?}", &self.source);
                 println!("{}", err);
                 println!("Skipping");
                 return Vec::new();
             }
         };
 
-        let mut blacklists: Vec<CName> = Vec::new();
+        let mut cnames: Vec<CName> = Vec::new();
         for line in source.lines() {
             if let Some(bl) = self.parser.parse(line) {
-                blacklists.push(bl);
+                cnames.push(bl);
             }
         }
 
-        blacklists
+        cnames
     }
 }

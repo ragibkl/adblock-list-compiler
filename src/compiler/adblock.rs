@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{cli::ConfigUrl, config::Config};
+use crate::config::{Config, ConfigUrl};
 
 use super::{
     blacklist::{BlacklistCompiler, ParseBlacklist},
@@ -28,7 +28,7 @@ impl AdblockCompiler {
             .blacklist
             .iter()
             .map(|bl| BlacklistCompiler {
-                file_source: FetchSource::new_from(&bl.path, config_url),
+                source: FetchSource::try_from(&bl.path, config_url).unwrap(),
                 parser: ParseBlacklist::from(&bl.format),
             })
             .collect();
@@ -37,7 +37,7 @@ impl AdblockCompiler {
             .whitelist
             .iter()
             .map(|wl| WhitelistCompiler {
-                file_source: FetchSource::new_from(&wl.path, config_url),
+                source: FetchSource::try_from(&wl.path, config_url).unwrap(),
                 parser: ParseWhitelist::from(&wl.format),
             })
             .collect();
@@ -46,7 +46,7 @@ impl AdblockCompiler {
             .overrides
             .iter()
             .map(|rw| RewritesCompiler {
-                file_source: FetchSource::new_from(&rw.path, config_url),
+                source: FetchSource::try_from(&rw.path, config_url).unwrap(),
                 parser: ParseRewrite::from(&rw.format),
             })
             .collect();

@@ -1,7 +1,8 @@
-pub mod cli;
+mod cli;
 mod commands;
 mod compiler;
 mod config;
+mod fetch;
 mod output;
 
 pub fn hello() {

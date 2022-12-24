@@ -34,21 +34,21 @@ impl From<&WhitelistFormat> for ParseWhitelist {
 
 #[derive(Debug)]
 pub struct WhitelistCompiler {
-    pub(crate) file_source: FetchSource,
+    pub(crate) source: FetchSource,
     pub(crate) parser: ParseWhitelist,
 }
 
 impl WhitelistCompiler {
     pub async fn load_whitelist(&self) -> Vec<Domain> {
-        let source = self.file_source.fetch().await.unwrap();
+        let source = self.source.fetch().await.unwrap();
 
-        let mut blacklists: Vec<Domain> = Vec::new();
+        let mut domains: Vec<Domain> = Vec::new();
         for line in source.lines() {
             if let Some(bl) = self.parser.parse(line) {
-                blacklists.push(bl);
+                domains.push(bl);
             }
         }
 
-        blacklists
+        domains
     }
 }
