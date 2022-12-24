@@ -1,5 +1,3 @@
-// mod config_url;
-
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
