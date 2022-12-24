@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use crate::compiler::AdblockCompiler;
-use crate::config::{ConfigProvider, ConfigUrl};
+use crate::config::{ConfigUrl, LoadConfig};
 
 pub async fn check_config(config_url: &ConfigUrl, output: &Path, format: &str) {
     println!("config file: {}", config_url);
@@ -10,13 +10,13 @@ pub async fn check_config(config_url: &ConfigUrl, output: &Path, format: &str) {
 
     println!("loading config:");
     println!("    config url: {}", config_url);
-    let config_provider = ConfigProvider::from(config_url);
-    let source_config = config_provider.load().await.unwrap();
+    let load_config = LoadConfig::from(config_url);
+    let config = load_config.load().await.unwrap();
     println!("loading config: done!");
 
     println!("configuration:");
-    println!("{:#?}", source_config);
+    println!("{:#?}", config);
 
-    let adblock_compiler = AdblockCompiler::new(&source_config, config_url);
+    let adblock_compiler = AdblockCompiler::new(&config, config_url);
     println!("Compiler Setting: {:#?}", &adblock_compiler);
 }

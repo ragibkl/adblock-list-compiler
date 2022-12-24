@@ -5,7 +5,7 @@ use super::{
     Config, ConfigUrl, SourceConfig,
 };
 
-pub struct ConfigProvider {
+pub struct LoadConfig {
     config_url: ConfigUrl,
     fetch_config: FetchConfig,
 }
@@ -15,11 +15,11 @@ pub enum LoadConfigError {
     #[error("FetchError: {0}")]
     Fetch(#[from] FetchConfigError),
 
-    #[error("ParseError: {0}")]
+    #[error("YamlError: {0}")]
     Yaml(#[from] serde_yaml::Error),
 }
 
-impl ConfigProvider {
+impl LoadConfig {
     pub async fn load(&self) -> Result<Config, LoadConfigError> {
         let content = self.fetch_config.fetch().await?;
         let source_config: SourceConfig = serde_yaml::from_str(&content)?;
@@ -33,7 +33,7 @@ impl ConfigProvider {
     }
 }
 
-impl From<&ConfigUrl> for ConfigProvider {
+impl From<&ConfigUrl> for LoadConfig {
     fn from(config_url: &ConfigUrl) -> Self {
         Self {
             config_url: config_url.clone(),

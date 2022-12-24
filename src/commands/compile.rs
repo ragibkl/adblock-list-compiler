@@ -3,14 +3,14 @@ use std::io::prelude::*;
 use std::path::PathBuf;
 
 use crate::compiler::AdblockCompiler;
-use crate::config::{ConfigProvider, ConfigUrl};
+use crate::config::{ConfigUrl, LoadConfig};
 use crate::output::ZoneOutput;
 
 pub async fn compile(config_url: &ConfigUrl, output: &PathBuf, format: &str) {
     println!("loading config:");
     println!("    config url: {}", config_url);
-    let config_provider = ConfigProvider::from(config_url);
-    let config = config_provider.load().await.unwrap();
+    let load_config = LoadConfig::from(config_url);
+    let config = load_config.load().await.unwrap();
     println!("loading config: done!");
 
     println!("compiling adblock list...");
