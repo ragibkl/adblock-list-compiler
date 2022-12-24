@@ -5,7 +5,7 @@ use thiserror::Error;
 use url::Url;
 
 #[derive(Debug)]
-pub struct FetchHTTP {
+pub struct FetchHttp {
     pub url: Url,
 }
 
@@ -15,7 +15,7 @@ pub enum FetchHTTPError {
     HTTPError(#[from] reqwest::Error),
 }
 
-impl FetchHTTP {
+impl FetchHttp {
     pub async fn fetch(&self) -> Result<String, FetchHTTPError> {
         lazy_static! {
             static ref CLIENT: reqwest::Client = reqwest::Client::builder()

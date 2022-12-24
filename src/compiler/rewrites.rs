@@ -1,4 +1,4 @@
-use crate::source_config::source_config::OverrideFormat;
+use crate::config::OverrideFormat;
 
 use super::{fetch_source::FetchSource, parser::CName};
 

@@ -1,10 +1,10 @@
-use std::path::PathBuf;
+use std::path::Path;
 
 use crate::cli::ConfigUrl;
 use crate::compiler::AdblockCompiler;
-use crate::source_config::provider::SourceConfigProvider;
+use crate::config::provider::SourceConfigProvider;
 
-pub async fn check_config(config_url: &ConfigUrl, output: &PathBuf, format: &str) {
+pub async fn check_config(config_url: &ConfigUrl, output: &Path, format: &str) {
     let conf_provider: SourceConfigProvider = match config_url {
         ConfigUrl::Url(url) => SourceConfigProvider::from(url),
         ConfigUrl::File(path) => SourceConfigProvider::from(path),

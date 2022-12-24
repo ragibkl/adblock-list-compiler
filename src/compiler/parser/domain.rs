@@ -11,7 +11,7 @@ fn parse_domain(value: &str) -> Option<Domain> {
         static ref RE: Regex = Regex::new(r"(?P<domain>.{2,200}\.[a-z]{2,6})").unwrap();
     }
 
-    RE.captures(&value)
+    RE.captures(value)
         .and_then(|cap| cap.name("domain"))
         .and_then(|d| {
             if d.as_str().starts_with("*.") {
@@ -26,9 +26,8 @@ fn parse_domain(value: &str) -> Option<Domain> {
             }
         })
         .map(|d| d.as_str().trim().to_string())
-        .map(|d| idna::domain_to_ascii(&d).ok())
-        .flatten()
-        .map(|d| Domain(d))
+        .and_then(|d| idna::domain_to_ascii(&d).ok())
+        .map(Domain)
 }
 
 impl Domain {

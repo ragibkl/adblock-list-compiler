@@ -32,7 +32,7 @@ impl FromStr for ConfigUrl {
 impl Display for ConfigUrl {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ConfigUrl::Url(url) => f.write_fmt(format_args!("Url: {}", url.to_string())),
+            ConfigUrl::Url(url) => f.write_fmt(format_args!("Url: {}", url)),
             ConfigUrl::File(path) => f.write_fmt(format_args!(
                 "File: {}",
                 path.as_path().as_os_str().to_str().unwrap_or_default()

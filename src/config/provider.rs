@@ -3,7 +3,7 @@ use std::{fs, path::PathBuf};
 use thiserror::Error;
 use url::Url;
 
-use super::source_config::SourceConfig;
+use super::Config;
 
 pub enum SourceConfigProvider {
     HTTPProvider { url: Url },
@@ -13,22 +13,22 @@ pub enum SourceConfigProvider {
 #[derive(Error, Debug)]
 pub enum FetchConfigError {
     #[error("HTTPError: {0}")]
-    HTTPError(#[from] reqwest::Error),
+    Http(#[from] reqwest::Error),
 
     #[error("FileReadError: {0}")]
-    FileReadError(#[from] std::io::Error),
+    FileRead(#[from] std::io::Error),
 }
 
 #[derive(Error, Debug)]
 pub enum LoadConfigError {
     #[error("FetchError: {0}")]
-    FetchConfigError(#[from] FetchConfigError),
+    Fetch(#[from] FetchConfigError),
 
     #[error("ParseError: {0}")]
-    ParseJsonError(#[from] serde_json::Error),
+    ParseJson(#[from] serde_json::Error),
 
     #[error("ParseError: {0}")]
-    ParseYamlError(#[from] serde_yaml::Error),
+    ParseYaml(#[from] serde_yaml::Error),
 }
 
 impl SourceConfigProvider {
@@ -43,9 +43,9 @@ impl SourceConfigProvider {
         Ok(content)
     }
 
-    pub async fn load_config(&self) -> Result<SourceConfig, LoadConfigError> {
+    pub async fn load_config(&self) -> Result<Config, LoadConfigError> {
         let content = self.fetch().await?;
-        let source_config: SourceConfig = serde_yaml::from_str(&content)?;
+        let source_config: Config = serde_yaml::from_str(&content)?;
         Ok(source_config)
     }
 }

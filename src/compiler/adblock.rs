@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{cli::ConfigUrl, source_config::source_config::SourceConfig};
+use crate::{cli::ConfigUrl, config::Config};
 
 use super::{
     blacklist::{BlacklistCompiler, ParseBlacklist},
@@ -23,7 +23,7 @@ pub struct AdblockCompiler {
 }
 
 impl AdblockCompiler {
-    pub fn new(config: &SourceConfig, config_url: &ConfigUrl) -> Self {
+    pub fn new(config: &Config, config_url: &ConfigUrl) -> Self {
         let blacklists: Vec<BlacklistCompiler> = config
             .blacklist
             .iter()
