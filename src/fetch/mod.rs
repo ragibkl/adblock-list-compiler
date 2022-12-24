@@ -6,8 +6,6 @@ use std::path::PathBuf;
 use thiserror::Error;
 use url::Url;
 
-use crate::cli::ConfigUrl;
-
 use self::{
     file::{FetchFile, FetchFileError},
     http::{FetchHTTPError, FetchHttp},
@@ -33,19 +31,6 @@ impl Fetch {
         match self {
             Fetch::Http(p) => Ok(p.fetch().await?),
             Fetch::File(p) => Ok(p.fetch().await?),
-        }
-    }
-}
-
-impl From<&ConfigUrl> for Fetch {
-    fn from(value: &ConfigUrl) -> Self {
-        match value {
-            ConfigUrl::Url(url) => Self::Http(FetchHttp {
-                url: url.to_owned(),
-            }),
-            ConfigUrl::File(path) => Self::File(FetchFile {
-                path: path.to_owned(),
-            }),
         }
     }
 }

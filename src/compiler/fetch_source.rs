@@ -17,7 +17,7 @@ pub struct FetchSource(Fetch);
 pub struct FetchSourceError(#[from] FetchError);
 
 #[derive(Error, Debug)]
-pub enum FetchConfigError {
+pub enum FetchSourceInitError {
     #[error("InvalidUrl: {0}")]
     InvalidUrl(#[from] url::ParseError),
 
@@ -32,7 +32,10 @@ pub enum FetchConfigError {
 }
 
 impl FetchSource {
-    pub fn try_from(source_path: &str, config_url: &ConfigUrl) -> Result<Self, FetchConfigError> {
+    pub fn try_from(
+        source_path: &str,
+        config_url: &ConfigUrl,
+    ) -> Result<Self, FetchSourceInitError> {
         if source_path.starts_with("http") {
             let url = Url::parse(source_path)?;
             Ok(Self(url.into()))
@@ -45,12 +48,12 @@ impl FetchSource {
                 ConfigUrl::File(p) => {
                     let path = p
                         .parent()
-                        .ok_or(FetchConfigError::InvalidPath)?
+                        .ok_or(FetchSourceInitError::InvalidPath)?
                         .join(source_path);
                     if path.exists() {
                         Ok(Self(path.into()))
                     } else {
-                        Err(FetchConfigError::FileNotExists)
+                        Err(FetchSourceInitError::FileNotExists)
                     }
                 }
             }
@@ -59,7 +62,7 @@ impl FetchSource {
             if path.exists() {
                 Ok(Self(path.into()))
             } else {
-                Err(FetchConfigError::FileNotExists)
+                Err(FetchSourceInitError::FileNotExists)
             }
         }
     }

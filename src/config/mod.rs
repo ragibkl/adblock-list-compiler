@@ -1,7 +1,7 @@
 use crate::cli::ConfigUrl;
 
 mod config_provider;
-// pub mod provider;
+mod fetch_config;
 
 pub use config_provider::ConfigProvider;
 
