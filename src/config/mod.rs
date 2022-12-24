@@ -1,4 +1,9 @@
-pub mod provider;
+use crate::cli::ConfigUrl;
+
+mod config_provider;
+// pub mod provider;
+
+pub use config_provider::ConfigProvider;
 
 #[derive(serde::Deserialize, Debug, Clone)]
 #[serde(rename_all = "snake_case")]
@@ -32,7 +37,15 @@ pub type Whitelist = Source<WhitelistFormat>;
 pub type Overrides = Source<OverrideFormat>;
 
 #[derive(serde::Deserialize, Debug, Clone)]
+pub struct SourceConfig {
+    pub blacklist: Vec<Blacklist>,
+    pub whitelist: Vec<Whitelist>,
+    pub overrides: Vec<Overrides>,
+}
+
+#[derive(Debug, Clone)]
 pub struct Config {
+    pub config_url: ConfigUrl,
     pub blacklist: Vec<Blacklist>,
     pub whitelist: Vec<Whitelist>,
     pub overrides: Vec<Overrides>,
