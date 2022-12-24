@@ -1,7 +1,10 @@
 mod file;
 mod http;
 
+use std::path::PathBuf;
+
 use thiserror::Error;
+use url::Url;
 
 use crate::cli::ConfigUrl;
 
@@ -44,5 +47,17 @@ impl From<&ConfigUrl> for Fetch {
                 path: path.to_owned(),
             }),
         }
+    }
+}
+
+impl From<Url> for Fetch {
+    fn from(url: Url) -> Self {
+        Self::Http(FetchHttp { url })
+    }
+}
+
+impl From<PathBuf> for Fetch {
+    fn from(path: PathBuf) -> Self {
+        Self::File(FetchFile { path })
     }
 }
