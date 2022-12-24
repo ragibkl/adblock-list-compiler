@@ -10,12 +10,12 @@ use crate::cli::ConfigUrl;
 
 use self::{
     file::{FetchFile, FetchFileError},
-    http::{FetchHTTP, FetchHTTPError},
+    http::{FetchHTTPError, FetchHttp},
 };
 
 #[derive(Debug)]
 pub enum FetchSource {
-    HTTP(FetchHTTP),
+    Http(FetchHttp),
     File(FetchFile),
 }
 
@@ -32,12 +32,12 @@ impl FetchSource {
     pub fn new_from(source_path: &str, config_url: &ConfigUrl) -> Self {
         if source_path.starts_with("http") {
             let u = url::Url::parse(source_path).unwrap();
-            FetchSource::HTTP(FetchHTTP { url: u })
+            FetchSource::Http(FetchHttp { url: u })
         } else if source_path.starts_with("./") {
             match config_url {
                 ConfigUrl::Url(u) => {
                     let a = u.join(source_path).unwrap();
-                    FetchSource::HTTP(FetchHTTP { url: a })
+                    FetchSource::Http(FetchHttp { url: a })
                 }
                 ConfigUrl::File(p) => {
                     let q = p.parent().unwrap().join(source_path);
@@ -52,7 +52,7 @@ impl FetchSource {
 
     pub async fn fetch(&self) -> Result<String, FetchSourceError> {
         match self {
-            FetchSource::HTTP(p) => Ok(p.fetch().await?),
+            FetchSource::Http(p) => Ok(p.fetch().await?),
             FetchSource::File(p) => Ok(p.fetch().await?),
         }
     }

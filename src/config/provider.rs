@@ -13,22 +13,22 @@ pub enum SourceConfigProvider {
 #[derive(Error, Debug)]
 pub enum FetchConfigError {
     #[error("HTTPError: {0}")]
-    HTTPError(#[from] reqwest::Error),
+    Http(#[from] reqwest::Error),
 
     #[error("FileReadError: {0}")]
-    FileReadError(#[from] std::io::Error),
+    FileRead(#[from] std::io::Error),
 }
 
 #[derive(Error, Debug)]
 pub enum LoadConfigError {
     #[error("FetchError: {0}")]
-    FetchConfigError(#[from] FetchConfigError),
+    Fetch(#[from] FetchConfigError),
 
     #[error("ParseError: {0}")]
-    ParseJsonError(#[from] serde_json::Error),
+    ParseJson(#[from] serde_json::Error),
 
     #[error("ParseError: {0}")]
-    ParseYamlError(#[from] serde_yaml::Error),
+    ParseYaml(#[from] serde_yaml::Error),
 }
 
 impl SourceConfigProvider {
