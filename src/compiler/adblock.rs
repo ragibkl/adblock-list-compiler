@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{cli::ConfigUrl, config::Config};
+use crate::config::{Config, ConfigUrl};
 
 use super::{
     blacklist::{BlacklistCompiler, ParseBlacklist},

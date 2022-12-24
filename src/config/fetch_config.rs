@@ -1,9 +1,8 @@
 use thiserror::Error;
 
-use crate::{
-    cli::ConfigUrl,
-    fetch::{Fetch, FetchError},
-};
+use crate::fetch::{Fetch, FetchError};
+
+use super::ConfigUrl;
 
 pub struct FetchConfig(Fetch);
 

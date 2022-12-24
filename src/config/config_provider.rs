@@ -1,10 +1,8 @@
 use thiserror::Error;
 
-use crate::cli::ConfigUrl;
-
 use super::{
     fetch_config::{FetchConfig, FetchConfigError},
-    Config, SourceConfig,
+    Config, ConfigUrl, SourceConfig,
 };
 
 pub struct ConfigProvider {

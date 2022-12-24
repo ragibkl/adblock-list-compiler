@@ -1,8 +1,7 @@
 use std::path::Path;
 
-use crate::cli::ConfigUrl;
 use crate::compiler::AdblockCompiler;
-use crate::config::ConfigProvider;
+use crate::config::{ConfigProvider, ConfigUrl};
 
 pub async fn check_config(config_url: &ConfigUrl, output: &Path, format: &str) {
     println!("config file: {}", config_url);

@@ -2,9 +2,8 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
 
-use crate::cli::ConfigUrl;
 use crate::compiler::AdblockCompiler;
-use crate::config::ConfigProvider;
+use crate::config::{ConfigProvider, ConfigUrl};
 use crate::output::ZoneOutput;
 
 pub async fn compile(config_url: &ConfigUrl, output: &PathBuf, format: &str) {

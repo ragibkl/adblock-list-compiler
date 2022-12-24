@@ -1,10 +1,10 @@
-mod config_url;
+// mod config_url;
 
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
 
-pub use config_url::ConfigUrl;
+use crate::config::ConfigUrl;
 
 #[derive(Debug, Subcommand)]
 pub enum Command {

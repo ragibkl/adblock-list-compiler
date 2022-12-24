@@ -5,7 +5,7 @@ use thiserror::Error;
 use url::Url;
 
 use crate::{
-    cli::ConfigUrl,
+    config::ConfigUrl,
     fetch::{Fetch, FetchError},
 };
 
