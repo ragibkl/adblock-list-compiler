@@ -1,4 +1,4 @@
-use crate::source_config::source_config::WhitelistFormat;
+use crate::config::WhitelistFormat;
 
 use super::{
     fetch_source::FetchSource,

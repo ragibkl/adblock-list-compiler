@@ -1,3 +1,5 @@
+pub mod provider;
+
 #[derive(serde::Deserialize, Debug, Clone)]
 #[serde(rename_all = "snake_case")]
 pub enum BlacklistFormat {
@@ -30,7 +32,7 @@ pub type Whitelist = Source<WhitelistFormat>;
 pub type Overrides = Source<OverrideFormat>;
 
 #[derive(serde::Deserialize, Debug, Clone)]
-pub struct SourceConfig {
+pub struct Config {
     pub blacklist: Vec<Blacklist>,
     pub whitelist: Vec<Whitelist>,
     pub overrides: Vec<Overrides>,

@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use crate::cli::ConfigUrl;
 use crate::compiler::AdblockCompiler;
-use crate::source_config::provider::SourceConfigProvider;
+use crate::config::provider::SourceConfigProvider;
 
 pub async fn check_config(config_url: &ConfigUrl, output: &PathBuf, format: &str) {
     let conf_provider: SourceConfigProvider = match config_url {

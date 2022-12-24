@@ -1,4 +1,4 @@
-use crate::source_config::source_config::BlacklistFormat;
+use crate::config::BlacklistFormat;
 
 use super::{
     fetch_source::FetchSource,

@@ -3,7 +3,7 @@ use std::{fs, path::PathBuf};
 use thiserror::Error;
 use url::Url;
 
-use super::source_config::SourceConfig;
+use super::Config;
 
 pub enum SourceConfigProvider {
     HTTPProvider { url: Url },
@@ -43,9 +43,9 @@ impl SourceConfigProvider {
         Ok(content)
     }
 
-    pub async fn load_config(&self) -> Result<SourceConfig, LoadConfigError> {
+    pub async fn load_config(&self) -> Result<Config, LoadConfigError> {
         let content = self.fetch().await?;
-        let source_config: SourceConfig = serde_yaml::from_str(&content)?;
+        let source_config: Config = serde_yaml::from_str(&content)?;
         Ok(source_config)
     }
 }

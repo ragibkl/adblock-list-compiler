@@ -4,8 +4,8 @@ use std::path::PathBuf;
 
 use crate::cli::ConfigUrl;
 use crate::compiler::AdblockCompiler;
+use crate::config::provider::SourceConfigProvider;
 use crate::output::ZoneOutput;
-use crate::source_config::provider::SourceConfigProvider;
 
 pub async fn compile(config_url: &ConfigUrl, output: &PathBuf, format: &str) {
     let conf_provider: SourceConfigProvider = match config_url {
