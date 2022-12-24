@@ -25,10 +25,10 @@ pub enum LoadConfigError {
     Fetch(#[from] FetchConfigError),
 
     #[error("ParseError: {0}")]
-    ParseJson(#[from] serde_json::Error),
+    Json(#[from] serde_json::Error),
 
     #[error("ParseError: {0}")]
-    ParseYaml(#[from] serde_yaml::Error),
+    Yaml(#[from] serde_yaml::Error),
 }
 
 impl SourceConfigProvider {

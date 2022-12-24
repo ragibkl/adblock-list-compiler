@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 
 use thiserror::Error;
+use url::Url;
 
 use crate::cli::ConfigUrl;
 
@@ -28,25 +29,51 @@ pub enum FetchSourceError {
     FileError(#[from] FetchFileError),
 }
 
+#[derive(Error, Debug)]
+pub enum FetchConfigError {
+    #[error("InvalidUrl: {0}")]
+    InvalidUrl(#[from] url::ParseError),
+
+    #[error("InvalidPath")]
+    InvalidPath,
+
+    #[error("FileNotExists")]
+    FileNotExists,
+
+    #[error("Infallible")]
+    Infallible(#[from] core::convert::Infallible),
+}
+
 impl FetchSource {
-    pub fn new_from(source_path: &str, config_url: &ConfigUrl) -> Self {
+    pub fn try_from(source_path: &str, config_url: &ConfigUrl) -> Result<Self, FetchConfigError> {
         if source_path.starts_with("http") {
-            let u = url::Url::parse(source_path).unwrap();
-            FetchSource::Http(FetchHttp { url: u })
+            let url = Url::parse(source_path)?;
+            Ok(FetchSource::Http(FetchHttp { url }))
         } else if source_path.starts_with("./") {
             match config_url {
                 ConfigUrl::Url(u) => {
-                    let a = u.join(source_path).unwrap();
-                    FetchSource::Http(FetchHttp { url: a })
+                    let url = u.join(source_path)?;
+                    Ok(FetchSource::Http(FetchHttp { url }))
                 }
                 ConfigUrl::File(p) => {
-                    let q = p.parent().unwrap().join(source_path);
-                    FetchSource::File(FetchFile { path: q })
+                    let path = p
+                        .parent()
+                        .ok_or(FetchConfigError::InvalidPath)?
+                        .join(source_path);
+                    if path.exists() {
+                        Ok(FetchSource::File(FetchFile { path }))
+                    } else {
+                        Err(FetchConfigError::FileNotExists)
+                    }
                 }
             }
         } else {
-            let path = PathBuf::from_str(source_path).unwrap();
-            FetchSource::File(FetchFile { path })
+            let path = PathBuf::from_str(source_path)?;
+            if path.exists() {
+                Ok(FetchSource::File(FetchFile { path }))
+            } else {
+                Err(FetchConfigError::FileNotExists)
+            }
         }
     }
 
