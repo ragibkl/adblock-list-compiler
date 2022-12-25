@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{fmt::Display, fs::File, io::Write, path::Path};
 
 use crate::compiler::Adblock;
 
@@ -6,47 +6,69 @@ pub struct ZoneOutput {
     adblock: Adblock,
 }
 
+fn format_blacklist(bl: &str) -> String {
+    format!("{} CNAME null.null-zone.null.", bl)
+}
+
+fn format_cname_rewrite(domain: &str, alias: &str) -> String {
+    format!("{} CNAME {}.", domain, alias)
+}
+
 impl ZoneOutput {
     pub fn new(adblock: Adblock) -> Self {
         Self { adblock }
     }
 
-    fn format_blacklist(&self, bl: &str) -> String {
-        format!("{} CNAME null.null-zone.null.", bl)
-    }
+    pub fn write_all(self, path: &Path) -> Result<(), std::io::Error> {
+        let mut f = File::create(path)?;
 
-    fn format_cname_rewrite(&self, domain: &str, alias: &str) -> String {
-        format!("{} CNAME {}.", domain, alias)
-    }
-
-    pub fn build_string(&self) -> String {
-        let mut lines: Vec<String> = Vec::new();
-
-        lines.push("$TTL 1H".to_string());
-        lines.push(
+        writeln!(f, "$TTL 1H")?;
+        writeln!(
+            f,
             "@               SOA     LOCALHOST. named-mgr.example.com (1 1h 15m 30d 2h)"
-                .to_string(),
-        );
-        lines.push("                NS      LOCALHOST.".to_string());
+        )?;
+        writeln!(f, "                NS      LOCALHOST.")?;
 
         for cname in &self.adblock.rewrites {
-            let line = self.format_cname_rewrite(&cname.domain.0, &cname.alias.0);
-            lines.push(line);
+            let line = format_cname_rewrite(&cname.domain.0, &cname.alias.0);
+            writeln!(f, "{}", line)?;
         }
 
         for domain in &self.adblock.blacklists {
-            let line = self.format_blacklist(&domain.0);
-            lines.push(line);
+            let line = format_blacklist(&domain.0);
+            writeln!(f, "{}", line)?;
         }
 
         // zone file must end with a newline
-        lines.push("".to_string());
-        lines.join("\n")
+        writeln!(f)?;
+
+        f.sync_all()?;
+        Ok(())
     }
 }
 
 impl Display for ZoneOutput {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&self.build_string())
+        writeln!(f, "$TTL 1H")?;
+        writeln!(
+            f,
+            "@               SOA     LOCALHOST. named-mgr.example.com (1 1h 15m 30d 2h)"
+        )?;
+        writeln!(f, "                NS      LOCALHOST.")?;
+
+        for cname in &self.adblock.rewrites {
+            let line = format_cname_rewrite(&cname.domain.0, &cname.alias.0);
+            writeln!(f, "{}", line)?;
+        }
+
+        for domain in &self.adblock.blacklists {
+            let line = format_blacklist(&domain.0);
+            writeln!(f, "{}", line)?;
+        }
+
+        // zone file must end with a newline
+        writeln!(f)?;
+
+        Ok(())
     }
 }

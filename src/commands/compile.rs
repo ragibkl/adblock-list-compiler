@@ -1,12 +1,10 @@
-use std::fs::File;
-use std::io::prelude::*;
-use std::path::PathBuf;
+use std::path::Path;
 
 use crate::compiler::AdblockCompiler;
 use crate::config::{ConfigUrl, LoadConfig};
 use crate::output::ZoneOutput;
 
-pub async fn compile(config_url: &ConfigUrl, output: &PathBuf, format: &str) {
+pub async fn compile(config_url: &ConfigUrl, output: &Path, format: &str) {
     println!("loading config:");
     println!("    config url: {}", config_url);
     let load_config = LoadConfig::from(config_url);
@@ -22,8 +20,6 @@ pub async fn compile(config_url: &ConfigUrl, output: &PathBuf, format: &str) {
     println!("    output file: {}", output.display());
     println!("    output format: {}", format);
     let zone_output = ZoneOutput::new(adblock);
-    let mut f = File::create(output).unwrap();
-    f.write_all(zone_output.to_string().as_bytes()).unwrap();
-    f.sync_all().unwrap();
+    zone_output.write_all(output).unwrap();
     println!("writing output file: done!");
 }
