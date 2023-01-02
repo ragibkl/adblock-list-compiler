@@ -40,7 +40,15 @@ pub struct WhitelistCompiler {
 
 impl WhitelistCompiler {
     pub async fn load_whitelist(&self) -> Vec<Domain> {
-        let source = self.source.fetch().await.unwrap();
+        let source = match self.source.fetch().await {
+            Ok(s) => s,
+            Err(err) => {
+                println!("Could not fetch from {:?}", &self.source);
+                println!("{}", err);
+                println!("Skipping");
+                return Vec::new();
+            }
+        };
 
         let mut domains: Vec<Domain> = Vec::new();
         for line in source.lines() {
