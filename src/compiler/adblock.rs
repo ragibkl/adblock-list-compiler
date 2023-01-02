@@ -1,10 +1,12 @@
 use std::collections::HashSet;
 
+use thiserror::Error;
+
 use crate::config::{Config, ConfigUrl};
 
 use super::{
     blacklist::{BlacklistCompiler, ParseBlacklist},
-    fetch_source::FetchSource,
+    fetch_source::{FetchSource, FetchSourceInitError},
     parser::{CName, Domain},
     rewrites::{ParseRewrite, RewritesCompiler},
     whitelist::{ParseWhitelist, WhitelistCompiler},
@@ -22,40 +24,47 @@ pub struct AdblockCompiler {
     rewrites: Vec<RewritesCompiler>,
 }
 
+#[derive(Debug, Error)]
+pub enum AdblockCompilerConfigError {
+    #[error("{0}")]
+    FetchSourceError(#[from] FetchSourceInitError),
+}
+
 impl AdblockCompiler {
-    pub fn new(config: &Config, config_url: &ConfigUrl) -> Self {
-        let blacklists: Vec<BlacklistCompiler> = config
-            .blacklist
-            .iter()
-            .map(|bl| BlacklistCompiler {
-                source: FetchSource::try_from(&bl.path, config_url).unwrap(),
-                parser: ParseBlacklist::from(&bl.format),
-            })
-            .collect();
+    pub fn init(
+        config: &Config,
+        config_url: &ConfigUrl,
+    ) -> Result<Self, AdblockCompilerConfigError> {
+        let mut blacklists = Vec::new();
 
-        let whitelists: Vec<WhitelistCompiler> = config
-            .whitelist
-            .iter()
-            .map(|wl| WhitelistCompiler {
-                source: FetchSource::try_from(&wl.path, config_url).unwrap(),
-                parser: ParseWhitelist::from(&wl.format),
-            })
-            .collect();
+        for bl in &config.blacklist {
+            let source = FetchSource::try_from(&bl.path, config_url)?;
+            let parser = ParseBlacklist::from(&bl.format);
 
-        let rewrites: Vec<RewritesCompiler> = config
-            .overrides
-            .iter()
-            .map(|rw| RewritesCompiler {
-                source: FetchSource::try_from(&rw.path, config_url).unwrap(),
-                parser: ParseRewrite::from(&rw.format),
-            })
-            .collect();
+            blacklists.push(BlacklistCompiler { source, parser });
+        }
 
-        Self {
+        let mut whitelists = Vec::new();
+        for wl in &config.whitelist {
+            let source = FetchSource::try_from(&wl.path, config_url)?;
+            let parser = ParseWhitelist::from(&wl.format);
+
+            whitelists.push(WhitelistCompiler { source, parser });
+        }
+
+        let mut rewrites = Vec::new();
+        for rw in &config.overrides {
+            let source = FetchSource::try_from(&rw.path, config_url)?;
+            let parser = ParseRewrite::from(&rw.format);
+
+            rewrites.push(RewritesCompiler { source, parser });
+        }
+
+        Ok(Self {
             blacklists,
             whitelists,
             rewrites,
-        }
+        })
     }
 
     pub async fn compile(&self) -> Adblock {

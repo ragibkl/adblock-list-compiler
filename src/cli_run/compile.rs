@@ -33,14 +33,20 @@ impl CliRun for Compile {
         let config = match load_config.load().await {
             Ok(c) => c,
             Err(e) => {
-                print!("Failed to load config: {}", e);
+                println!("Failed to load config: {}", e);
                 return 1;
             }
         };
         println!("loading config: done!");
 
         println!("compiling adblock list...");
-        let adblock_compiler = AdblockCompiler::new(&config, &self.config_url);
+        let adblock_compiler = match AdblockCompiler::init(&config, &self.config_url) {
+            Ok(ac) => ac,
+            Err(e) => {
+                println!("Failed to to init adblock compilerL {}", e);
+                return 1;
+            }
+        };
         let adblock = adblock_compiler.compile().await;
         println!("compiling adblock list... done!");
 
