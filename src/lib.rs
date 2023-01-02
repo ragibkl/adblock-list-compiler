@@ -1,5 +1,5 @@
 mod cli;
-mod commands;
+mod cli_run;
 mod compiler;
 mod config;
 mod fetch;
@@ -9,23 +9,9 @@ pub fn hello() {
     println!("Hello, world!");
 }
 
-pub async fn run() {
+pub async fn run() -> u8 {
     let cli_args = cli::Cli::from_args();
+    let cmd = cli_args.into_cli_run();
 
-    match &cli_args.command {
-        cli::Command::CheckConfig {
-            config_url,
-            output,
-            format,
-        } => {
-            commands::check_config::check_config(config_url, output, format).await;
-        }
-        cli::Command::Compile {
-            config_url,
-            output,
-            format,
-        } => {
-            commands::compile::compile(config_url, output, format).await;
-        }
-    };
+    cmd.run().await
 }

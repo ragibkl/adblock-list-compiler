@@ -2,12 +2,15 @@ use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
 
-use crate::config::ConfigUrl;
+use crate::{
+    cli_run::{check_config::ConfigCheck, compile::Compile, CliRun},
+    config::ConfigUrl,
+};
 
 #[derive(Debug, Subcommand)]
-pub enum Command {
+pub enum ConfigCommand {
     /// Outputs the current config
-    CheckConfig {
+    Check {
         /// Sets a custom config file
         #[arg(
             short,
@@ -25,7 +28,14 @@ pub enum Command {
         #[arg(short, long, value_name = "FORMAT", default_value = "zone")]
         format: String,
     },
+}
 
+#[derive(Debug, Subcommand)]
+pub enum Command {
+    #[command(subcommand)]
+    Config(ConfigCommand),
+
+    // Compiles an adblock list and output to file
     Compile {
         /// Sets a custom config file
         #[arg(
@@ -56,5 +66,22 @@ pub struct Cli {
 impl Cli {
     pub fn from_args() -> Self {
         Self::parse()
+    }
+
+    pub fn into_cli_run(self) -> Box<dyn CliRun> {
+        match &self.command {
+            Command::Config(c) => match c {
+                ConfigCommand::Check {
+                    config_url,
+                    output,
+                    format,
+                } => Box::new(ConfigCheck::new(config_url, output, format)),
+            },
+            Command::Compile {
+                config_url,
+                output,
+                format,
+            } => Box::new(Compile::new(config_url, output, format)),
+        }
     }
 }
