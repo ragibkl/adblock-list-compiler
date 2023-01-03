@@ -1,5 +1,5 @@
-pub mod check_config;
 pub mod compile;
+pub mod config_check;
 
 use async_trait::async_trait;
 
