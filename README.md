@@ -36,7 +36,7 @@ Check the version you have
 ablc -v
 
 # output
-adblock-list-compiler 0.0.4
+adblock-list-compiler 0.0.6
 ```
 
 ## Configuration File
