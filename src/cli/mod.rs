@@ -2,12 +2,15 @@ use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
 
-use crate::config::ConfigUrl;
+use crate::{
+    cli_run::{compile::Compile, config_check::ConfigCheck, CliRun},
+    config::ConfigUrl,
+};
 
 #[derive(Debug, Subcommand)]
-pub enum Command {
+pub enum ConfigCommand {
     /// Outputs the current config
-    CheckConfig {
+    Check {
         /// Sets a custom config file
         #[arg(
             short,
@@ -16,16 +19,15 @@ pub enum Command {
             default_value = "https://raw.githubusercontent.com/ragibkl/adblock-dns-server/master/data/configuration.yaml"
         )]
         config_url: ConfigUrl,
-
-        /// output file location
-        #[arg(short, long, value_name = "CONFIG", default_value = "./blacklist.zone")]
-        output: PathBuf,
-
-        /// output format
-        #[arg(short, long, value_name = "FORMAT", default_value = "zone")]
-        format: String,
     },
+}
 
+#[derive(Debug, Subcommand)]
+pub enum Command {
+    #[command(subcommand)]
+    Config(ConfigCommand),
+
+    // Compiles an adblock list and output to file
     Compile {
         /// Sets a custom config file
         #[arg(
@@ -37,7 +39,7 @@ pub enum Command {
         config_url: ConfigUrl,
 
         /// output file location
-        #[arg(short, long, value_name = "CONFIG", default_value = "./blacklist.zone")]
+        #[arg(short, long, value_name = "OUTPUT", default_value = "./blacklist.zone")]
         output: PathBuf,
 
         /// output format
@@ -56,5 +58,18 @@ pub struct Cli {
 impl Cli {
     pub fn from_args() -> Self {
         Self::parse()
+    }
+
+    pub fn into_cli_run(self) -> Box<dyn CliRun> {
+        match &self.command {
+            Command::Config(config_cmd) => match config_cmd {
+                ConfigCommand::Check { config_url } => Box::new(ConfigCheck::new(config_url)),
+            },
+            Command::Compile {
+                config_url,
+                output,
+                format,
+            } => Box::new(Compile::new(config_url, output, format)),
+        }
     }
 }
