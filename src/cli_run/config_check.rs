@@ -37,7 +37,7 @@ impl CliRun for ConfigCheck {
         println!("configuration:");
         println!("{:#?}", config);
 
-        let adblock_compiler = match AdblockCompiler::init(&config, &self.config_url) {
+        let adblock_compiler = match AdblockCompiler::init(&config) {
             Ok(ac) => ac,
             Err(e) => {
                 println!("Failed to to init adblock compilerL {}", e);
