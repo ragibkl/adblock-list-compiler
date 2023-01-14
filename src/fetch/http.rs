@@ -13,6 +13,9 @@ pub struct FetchHttp {
 pub enum FetchHTTPError {
     #[error("HTTPError: {0}")]
     HTTPError(#[from] reqwest::Error),
+
+    #[error("Unknown")]
+    Unknown,
 }
 
 impl FetchHttp {
@@ -25,8 +28,21 @@ impl FetchHttp {
                 .unwrap();
         }
 
-        let response = CLIENT.get(self.url.to_string()).send().await?;
-        let text = response.text().await?;
-        Ok(text)
+        let mut last_error: FetchHTTPError = FetchHTTPError::Unknown;
+        for i in 1..=5 {
+            match CLIENT.get(self.url.to_string()).send().await {
+                Ok(response) => {
+                    let text = response.text().await?;
+                    println!("Fetch ok: {}, attempt: {}", &self.url, i);
+                    return Ok(text);
+                }
+                Err(e) => {
+                    println!("Fetch err: {}, attempt: {}", &self.url, i);
+                    last_error = e.into();
+                }
+            }
+        }
+
+        Err(last_error)
     }
 }
